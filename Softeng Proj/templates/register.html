@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Register</title>
+        <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff; /* White background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 100%;
+            padding: 25px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .title-container img {
+            height: 50px;
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            margin-right: 12px;
+        }
+
+        .site-title {
+            font-size: 1.8em;
+            color: #333;
+            font-weight: bold;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        label {
+            font-size: 0.95em;
+            color: #555;
+            text-align: left;
+        }
+
+        input[type="email"],
+        input[type="full_name"],
+        input[type="contact_no"],
+        input[type="password"],
+        input[type="text"] {
+            padding: 14px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="email"]:focus,
+        input[type="full_name"]:focus,
+        input[type="contact_no"]:focus,
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            border-color: #74b9ff;
+            outline: none;
+        }
+
+        input[type="submit"] {
+            background-color: #B4DC7F;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 4px 12px rgba(0, 168, 0, 0.15);
+        }
+
+        input[type="submit"]:hover {
+            background-color: #9fc46e;
+        }
+
+        input[type="submit"]:active {
+            transform: scale(0.98);
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: -10px;
+        }
+
+        .login-link {
+            margin-top: 20px;
+            font-size: 0.95em;
+            color: #666;
+        }
+
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="title-container">
+                <img src="http://localhost:5000//static/logo_black.png">
+                <img src="http://localhost:5000//static/name_black.png">
+            </div>
+
+            <h2>Register</h2>
+            <form id="registerForm">
+                <label for="full_name">Full Name</label>
+                <input type="full_name" id="registerName" required
+                    placeholder="Type your full name">
+                <label for="contact_no">Contact Number</label>
+                <input type="contact_no" id="registerNumber" required
+                    placeholder="Type your contact number">
+                <label for="email">Email</label>
+                <input type="email" id="registerEmail" required
+                    placeholder="Type email">
+
+                <label for="password">Password</label>
+                <input type="password" id="registerPassword" required
+                    placeholder="Type password">
+
+                <input type="submit" value="Register">
+                <div id="registerError" class="error"></div>
+            </form>
+
+            <div class="login-link">
+                <p>Already have an account? <a
+                        href="{{ url_for('login') }}">Login
+                        here</a></p>
+            </div>
+        </div>
+
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </body>
+</html>

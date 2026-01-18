@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Snap&Found - Lost and Found Management</title>
+        <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Header and logo */
+        header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header img {
+            height: 50px;
+        }
+
+        .logo-name-container {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between logo and name */
+        }
+
+
+        /* Main content */
+        .main-content {
+            text-align: center;
+            margin-top: 100px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .main-content h1 {
+            font-size: 3em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .main-content p {
+            font-size: 1.1em;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .cta-button {
+            padding: 15px 25px;
+            font-size: 1.2em;
+            background-color: #B4DC7F;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #9fc46e;
+        }
+    </style>
+    </head>
+    <body>
+        <!-- Header with Logo and Name -->
+        <header>
+            <div class="logo-name-container">
+                <img src="/static/logo_black.png" alt="Snap&Found Logo">
+                <img src="/static/name_black.png" alt="Snap&Found Name">
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h1>Welcome to Snap&Found</h1>
+            <p style="margin-bottom: 0;">Lost something? Found something? Snap a
+                picture, upload it, and
+                help others locate their lost items.</p>
+            <p>Our platform allows you to easily upload images of lost and found
+                items, making it simple for anyone to find what they're missing.
+                Whether you're a student, professional, or traveler, Snap&Found
+                helps you connect with others in your community to reunite with
+                your possessions.</p>
+            <a href="/register" class="cta-button">Get Started</a>
+        </div>
+    </body>
+</html>

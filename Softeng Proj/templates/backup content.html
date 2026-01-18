@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard</title>
+        <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #1e2a38;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.hide {
+            transform: translateX(-250px);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-family: 'Cursive', sans-serif;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            margin-bottom: 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: #3b4a5a;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .content.shift {
+            margin-left: 0;
+        }
+
+        .button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        #foundContainer, #lostContainer {
+            display: none;
+            margin-top: 20px;
+        }
+
+        /* Added margin for upload message */
+        #uploadMessageFound, #lostUploadMessage {
+            margin-top: 20px;
+            color: green;
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            font-size: 30px;
+            cursor: pointer;
+            display: none;
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            color: #1e2a38;
+        }
+
+        @media screen and (max-width: 768px) {
+            .content {
+                margin-left: 0;
+            }
+
+            .sidebar {
+                transform: translateX(-250px);
+            }
+
+            .hamburger {
+                display: block;
+            }
+        }
+
+        /* Dropdown Styles */
+        .dropdown-btn {
+            background-color: #1e2a38;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .dropdown-btn:hover {
+            background-color: #3b4a5a;
+        }
+
+        .dropdown-container {
+            display: none;
+            background-color: #3b4a5a;
+        }
+
+        .dropdown-container a {
+            padding-left: 40px;
+        }
+
+        .dropdown-container a:hover {
+            background-color: #4e5b69;
+        }
+
+        /* Styles for the image results container */
+        #imageResults {
+            margin-top: 20px;
+            max-width: 400px;
+        }
+
+        #imageResults img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 15px; /* Space between images */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+    </head>
+    <body>
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <h2>Lost2Found</h2>
+            <a href="#">Dashboard</a>
+            <a href="#">Notification</a>
+            <!-- Dropdown for Item Tracker -->
+            <button class="dropdown-btn">Item Tracker</button>
+            <div class="dropdown-container">
+                <a href="#" id="foundButton">Found</a>
+                <a href="#" id="lostButton">Lost</a>
+            </div>
+            <a href="#" id="logoutButton">Logout</a>
+        </div>
+
+        <!-- Hamburger Menu for mobile -->
+        <div class="hamburger" id="hamburger">☰</div>
+
+        <!-- Main Content -->
+        <div class="content" id="main-content">
+            <!-- Found Items Section -->
+            <div id="foundContainer">
+                <h2>Found an Item? Upload Photo</h2>
+                <select id="categorySelectFound">
+                    <option value>Select Category</option>
+                    <option value="gadget">Gadget</option>
+                    <option value="accessory">Accessory</option>
+                </select>
+                <br><br>
+                <input type="file" id="fileInputFound" accept="image/*">
+                <br><br>
+                <button id="uploadButtonFound" class="button">Upload</button>
+                <div id="uploadMessageFound"></div>
+            </div>
+
+            <!-- Lost Items Section -->
+            <div id="lostContainer">
+                <h2>Lost an item? Upload a photo</h2>
+                <select id="categorySelectLost">
+                    <option value>Select Category</option>
+                    <option value="gadget">Gadget</option>
+                    <option value="accessory">Accessory</option>
+                </select>
+                <br><br>
+                <input type="file" id="fileInputLost" accept="image/*">
+                <br><br>
+                <button id="lostUploadButton" class="button">Find
+                    Matches</button>
+                <div id="lostUploadMessage"></div>
+                <!-- This div will display match results -->
+                <div id="imageResults"></div>
+                <!-- This div will display the images in vertical -->
+            </div>
+        </div>
+
+        <!-- JavaScript -->
+        <script>
+        const foundButton = document.getElementById('foundButton');
+        const lostButton = document.getElementById('lostButton');
+        const foundContainer = document.getElementById('foundContainer');
+        const lostContainer = document.getElementById('lostContainer');
+        const uploadButtonFound = document.getElementById('uploadButtonFound');
+        const lostUploadButton = document.getElementById('lostUploadButton');
+        const categorySelectFound = document.getElementById('categorySelectFound');
+        const categorySelectLost = document.getElementById('categorySelectLost');
+        const fileInputFound = document.getElementById('fileInputFound');
+        const fileInputLost = document.getElementById('fileInputLost');
+        const uploadMessageFound = document.getElementById('uploadMessageFound');
+        const lostUploadMessage = document.getElementById('lostUploadMessage');
+        const imageResults = document.getElementById('imageResults'); // Image results container
+        const sidebar = document.getElementById('sidebar');
+        const hamburger = document.getElementById('hamburger');
+        const mainContent = document.getElementById('main-content');
+        const dropdownBtn = document.querySelector('.dropdown-btn');
+        const dropdownContainer = document.querySelector('.dropdown-container');
+        const logoutButton = document.getElementById('logoutButton');
+
+        // Toggle sidebar visibility on hamburger click (for mobile)
+        hamburger.addEventListener('click', function() {
+            if (sidebar.style.transform === 'translateX(0px)') {
+                sidebar.style.transform = 'translateX(-250px)';
+            } else {
+                sidebar.style.transform = 'translateX(0px)';
+            }
+        });
+
+        // Toggle foundContainer when 'Found' button is pressed
+        foundButton.addEventListener('click', () => {
+            foundContainer.style.display = foundContainer.style.display === 'none' ? 'block' : 'none';
+            lostContainer.style.display = 'none'; // Hide lostContainer
+        });
+
+        // Toggle lostContainer when 'Lost' button is pressed
+        lostButton.addEventListener('click', () => {
+            lostContainer.style.display = lostContainer.style.display === 'none' ? 'block' : 'none';
+            foundContainer.style.display = 'none'; // Hide foundContainer
+        });
+
+        // Handle file upload for Found items
+        uploadButtonFound.addEventListener('click', function () {
+            const category = categorySelectFound.value;
+            const file = fileInputFound.files[0];
+
+            if (!category || !file) {
+                uploadMessageFound.textContent = 'Please select a category and choose a file.';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('category', category);
+            formData.append('file', file);
+
+            fetch('http://localhost:5000/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    uploadMessageFound.textContent = 'File uploaded successfully.';
+                } else {
+                    uploadMessageFound.textContent = `Error: ${data.message}`;
+                }
+            })
+            .catch(() => {
+                uploadMessageFound.textContent = 'Error connecting to the server.';
+            });
+        });
+
+       // Handle file upload for Lost items and display matches
+       lostUploadButton.addEventListener('click', function () {
+    const category = categorySelectLost.value;
+    const file = fileInputLost.files[0];
+
+    if (!category || !file) {
+        lostUploadMessage.textContent = 'Please select a category and choose a file.';
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('category', category);
+    formData.append('file', file);
+
+    fetch('http://localhost:5000/compare', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Clear previous messages and results
+        lostUploadMessage.textContent = '';
+        imageResults.innerHTML = '';
+
+        if (data.success) {
+            lostUploadMessage.textContent = `Found ${data.matches.length} similar item(s):`;
+
+            data.matches.forEach(match => {
+    // Create a container for each result
+    const imgContainer = document.createElement('div');
+    imgContainer.style.marginBottom = '15px';  // Add space between images
+
+    // Display the image
+    const img = document.createElement('img');
+    img.src = `http://localhost:5000${match.url}`;  // Make sure this is the correct image URL
+    img.alt = 'Matched Image';
+    img.style.maxWidth = '200px';  // Resize for display
+
+    // Add click event to the image for confirmation
+    img.addEventListener('click', function() {
+        const confirmation = confirm(`Are you sure this is your lost item? \nSimilarity: ${match.similarity}%`);
+        if (confirmation) {
+            // Handle the case when the user confirms
+            alert('You have confirmed this item as your lost item.');
+            // You can add further logic here, such as sending data to the server
+        }
+    });
+
+    imgContainer.appendChild(img);
+
+    // Display the similarity percentage
+    const similarityText = document.createElement('p');
+    similarityText.textContent = `Similarity: ${match.similarity}%`;
+    imgContainer.appendChild(similarityText);
+
+    // Append the image and similarity result to the result container
+    imageResults.appendChild(imgContainer);
+});
+
+
+        } else {
+            lostUploadMessage.textContent = `No matches found: ${data.message}`;
+        }
+    })
+    .catch(error => {
+        lostUploadMessage.textContent = 'Error connecting to the server.';
+        console.error('Error:', error);
+    });
+});
+
+
+        // Toggle Dropdown in Sidebar
+        dropdownBtn.addEventListener('click', function() {
+            dropdownContainer.style.display = dropdownContainer.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Logout Button Click Event (just an example)
+        logoutButton.addEventListener('click', function () {
+            window.location.href = 'http://localhost:5000/logout'; // Redirect to logout
+        });
+    </script>
+    </body>
+</html>

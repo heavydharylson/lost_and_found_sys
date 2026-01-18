@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login</title>
+        <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff; /* Set background to white */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+            position: relative; /* Enables positioning for the back button */
+        }
+
+        /* Go Back Home button */
+        .back-home {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: #fff; /* White background */
+            color: #B4DC7F; /* Green text for better contrast */
+            padding: 8px 14px;
+            border-radius: 5px;
+            font-size: 1em;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Space between text and arrow */
+            border: 2px solid #B4DC7F; /* Border color */
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .back-home:hover {
+            background-color: #B4DC7F; /* Change background on hover */
+            color: #fff; /* Change text color on hover */
+        }
+
+        /* Arrow icon styling */
+        .back-home::before {
+            content: '←'; /* Unicode for the left arrow */
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 100%;
+            padding: 25px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .title-container img {
+            height: 50px;
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            margin-right: 12px;
+        }
+
+        .site-title {
+            font-size: 1.8em;
+            color: #333;
+            font-weight: bold;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        label {
+            font-size: 0.95em;
+            color: #555;
+            text-align: left;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            padding: 14px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            border-color: #74b9ff;
+            outline: none;
+        }
+
+        input[type="submit"] {
+            background-color: #B4DC7F;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 4px 12px rgba(0, 168, 0, 0.15);
+        }
+
+        input[type="submit"]:hover {
+            background-color: #9fc46e;
+        }
+
+        input[type="submit"]:active {
+            transform: scale(0.98);
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: -10px;
+        }
+
+        .register-link {
+            margin-top: 20px;
+            font-size: 0.95em;
+            color: #666;
+        }
+
+        .register-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .show-password-container {
+            display: flex;
+            align-items: center;
+            font-size: 0.95em;
+            color: #555;
+            margin-top: -10px;
+        }
+
+        .show-password-container input[type="checkbox"] {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+    </style>
+    </head>
+    <body>
+        <!-- Go Back Home Button -->
+        <a href="/" class="back-home">Go Back Home</a>
+
+        <div class="container">
+            <div class="title-container">
+                <img src="http://localhost:5000/static/logo_black.png"
+                    alt="Logo">
+                <img src="http://localhost:5000/static/name_black.png"
+                    alt="Site Title">
+            </div>
+            <h2>Login</h2>
+            <form id="loginForm" action="/login" method="POST">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" name="email" required
+                    placeholder="Email">
+
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" name="password"
+                    required placeholder="Password">
+
+                <div class="show-password-container">
+                    <input type="checkbox" id="showPassword">
+                    <label for="showPassword">Show Password</label>
+                </div>
+
+                <input type="submit" value="Login">
+                <div id="loginError" class="error">
+                    {% if error %}
+                    {{ error }}
+                    {% endif %}
+                </div>
+            </form>
+
+            <div class="register-link">
+                <p>Don't have an account? <a
+                        href="{{ url_for('register') }}">Create one here</a></p>
+            </div>
+        </div>
+        <script>
+        const showPassword = document.getElementById('showPassword');
+        const loginForm = document.getElementById('loginForm');
+        if (showPassword) {
+            document.getElementById('showPassword').addEventListener('change', function() {
+                const passwordField = document.getElementById('loginPassword');
+                passwordField.type = this.checked ? 'text' : 'password';
+            });
+        }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard</title>
+        <link rel="stylesheet"
+            href="{{ url_for('static', filename='css/content.css') }}">
+    </head>
+    <body>
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div id="logoContainer">
+                <img src="http://localhost:5000//static/logo_black.png">
+                <img src="http://localhost:5000//static/name_black.png">
+            </div>
+            <div id="sidebarContainer">
+                <img src="http://localhost:5000//static/profile_icon.svg">
+                <a href="/profile" id="profileButton">Profile</a>
+            </div>
+            <div id="sidebarContainer">
+                <img src="http://localhost:5000//static/db_icon.svg">
+                <a id="dashboardButton" href="#">Dashboard</a>
+            </div>
+
+            <!-- Dropdown for Item Tracker -->
+            <div id="sidebarContainer">
+                <img src="http://localhost:5000//static/tracker_icon.svg">
+                <a style="margin: 0; padding-left: 0;"
+                    class="dropdown-btn">Item
+                    Tracker</a>
+            </div>
+            <div class="dropdown-container">
+                <div id="dropdown-item1">
+                    <img src="http://localhost:5000//static/found_icon.png">
+                    <a href="#" id="foundButton">Found</a>
+                </div>
+                <div id="dropdown-item2">
+                    <img src="http://localhost:5000//static/lost_icon.svg">
+                    <a href="#" id="lostButton">Lost</a>
+                </div>
+            </div>
+            <div style="margin-top: auto; border-bottom-right-radius: 12px;"
+                id="sidebarContainer">
+                <img src="http://localhost:5000//static/logout_icon.svg">
+                <a href="#" id="logoutButton">Logout</a>
+            </div>
+
+        </div>
+
+        <!-- Hamburger Menu for mobile -->
+        <div class="hamburger" id="hamburger">☰</div>
+
+        <!-- Main Content -->
+        <div class="content" id="main-content">
+            <div id="db-container">
+                <div class="search-bar">
+                    <input type="text" id="search-input"
+                        placeholder="Search items...">
+                    <button id="search-button">Search</button>
+                </div>
+                <div id="item-list">
+                    <!-- Items will be inserted here dynamically -->
+                </div>
+            </div>
+
+            <!-- Found Items Section -->
+            <div id="foundContainer">
+                <h2>Found an Item? Upload a photo</h2>
+                <select id="categorySelectFound">
+                    <option value>Select Category</option>
+                    <option value="gadget">Gadget</option>
+                    <option value="accessory">Accessory</option>
+                </select>
+                <br><br>
+                <input type="file" id="fileInputFound" accept="image/*">
+                <br><br>
+
+                <!-- Item Title -->
+                <div class="form-group">
+                    <label for="itemTitleFound">Item Title</label>
+                    <input type="text" name="title" required
+                        id="itemTitleFound">
+                </div>
+
+                <!-- Item Description -->
+                <div class="form-group">
+                    <label for="itemDescriptionFound">Item Description</label>
+                    <textarea name="description" required
+                        id="itemDescriptionFound"></textarea>
+                </div>
+
+                <button id="uploadButtonFound" class="button">Upload</button>
+                <div id="uploadMessageFound"></div>
+            </div>
+
+            <!-- Lost Items Section -->
+            <div id="lostContainer">
+                <h2>Lost an item? Upload a photo</h2>
+                <select id="categorySelectLost">
+                    <option value>Select Category</option>
+                    <option value="gadget">Gadget</option>
+                    <option value="accessory">Accessory</option>
+                </select>
+                <br><br>
+                <input type="file" id="fileInputLost" accept="image/*">
+                <br><br>
+                <button id="lostUploadButton" class="button">Find
+                    Matches</button>
+                <div id="lostUploadMessage"></div>
+                <!-- This div will display match results -->
+            </div>
+            <div id="imageResults"></div>
+            <!-- This div will display the images in vertical -->
+        </div>
+
+        <!-- JavaScript -->
+        <script>
+        const foundButton = document.getElementById('foundButton');
+        const lostButton = document.getElementById('lostButton');
+        const foundContainer = document.getElementById('foundContainer');
+        const lostContainer = document.getElementById('lostContainer');
+        const uploadButtonFound = document.getElementById('uploadButtonFound');
+        const lostUploadButton = document.getElementById('lostUploadButton');
+        const categorySelectFound = document.getElementById('categorySelectFound');
+        const categorySelectLost = document.getElementById('categorySelectLost');
+        const fileInputFound = document.getElementById('fileInputFound');
+        const itemTitleFound = document.getElementById('itemTitleFound');
+        const itemDescriptionFound = document.getElementById('itemDescriptionFound');
+        const fileInputLost = document.getElementById('fileInputLost');
+        const uploadMessageFound = document.getElementById('uploadMessageFound');
+        const lostUploadMessage = document.getElementById('lostUploadMessage');
+        const imageResults = document.getElementById('imageResults'); // Image results container
+        const sidebar = document.getElementById('sidebar');
+        const hamburger = document.getElementById('hamburger');
+        const mainContent = document.getElementById('main-content');
+        const dropdownBtn = document.querySelector('.dropdown-btn');
+        const dropdownContainer = document.querySelector('.dropdown-container');
+        const logoutButton = document.getElementById('logoutButton');
+        const dashboardButton = document.getElementById('dashboardButton');
+        const dbContainer = document.getElementById('db-container');
+
+        // Toggle sidebar visibility on hamburger click (for mobile)
+        hamburger.addEventListener('click', function() {
+            if (sidebar.style.transform === 'translateX(0px)') {
+                sidebar.style.transform = 'translateX(-250px)';
+            } else {
+                sidebar.style.transform = 'translateX(0px)';
+            }
+        });
+
+        dashboardButton.addEventListener('click', () => {
+            dbContainer.style.display ='flex';
+            foundContainer.style.display = 'none'; // Hide foundContainer
+            lostContainer.style.display = 'none'; // Hide lostContainer
+            imageResults.style.display = 'none'; // Hide imageResults
+        });
+
+        // Toggle foundContainer when 'Found' button is pressed
+        foundButton.addEventListener('click', () => {
+            dbContainer.style.display ='none';
+            foundContainer.style.display = 'flex'; // Show foundContainer
+            lostContainer.style.display = 'none'; // Hide lostContainer
+            imageResults.style.display = 'none'; // Hide imageResults
+        });
+
+        // Toggle lostContainer and imageResults when 'Lost' button is pressed
+        lostButton.addEventListener('click', () => {
+            dbContainer.style.display ='none';
+            lostContainer.style.display = 'flex'; // Show lostContainer
+            imageResults.style.display = 'grid'; // Show imageResults
+            foundContainer.style.display = 'none'; // Hide foundContainer
+        });
+
+
+                        // Handle file upload for Found items
+        uploadButtonFound.addEventListener('click', function () {
+            const category = categorySelectFound.value;
+            const file = fileInputFound.files[0];
+            const title = itemTitleFound.value;
+            const description = itemDescriptionFound.value;
+
+            if (!category || !file || !title || !description) {
+                uploadMessageFound.style.color = 'red';
+                uploadMessageFound.textContent = 'Please select a category, choose a file, and provide a title and description.';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('category', category);
+            formData.append('file', file);
+            formData.append('title', title);
+            formData.append('description', description);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Server responded with status ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    uploadMessageFound.style.color = 'green';
+                    uploadMessageFound.textContent = 'File uploaded successfully.';
+                } else {
+                    uploadMessageFound.style.color = 'red';
+                    uploadMessageFound.textContent = `Error: ${data.message}`;
+                }
+            })
+            .catch(error => {
+                uploadMessageFound.style.color = 'red';
+                uploadMessageFound.textContent = 'Error connecting to the server: ' + error.message;
+            });
+        });
+
+
+
+
+
+// Handle file upload for Lost items and display matches
+lostUploadButton.addEventListener('click', function () {
+    const category = categorySelectLost.value;
+    const file = fileInputLost.files[0];
+
+    if (!category || !file) {
+        uploadMessageFound.style.color = 'red';
+        lostUploadMessage.textContent = 'Please select a category and choose a file.';
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('category', category);
+    formData.append('file', file);
+
+    fetch('/compare', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Clear previous messages and results
+        lostUploadMessage.textContent = '';
+        imageResults.innerHTML = '';
+
+        if (data.success) {
+            lostUploadMessage.style.color = 'green';
+            lostUploadMessage.textContent = `Found ${data.matches.length} similar item(s):`;
+
+            data.matches.forEach(match => {
+                // Create a container for each result
+                const imgContainer = document.createElement('div');
+                imgContainer.classList.add('resultsContainer');
+                imgContainer.style.marginBottom = '15px';  // Add space between images
+
+                // Display the image
+                const img = document.createElement('img');
+                img.src = `http://localhost:5000${match.url}`;  // Make sure this is the correct image URL
+                img.alt = 'Matched Image';
+                img.style.maxWidth = '200px';  // Resize for display
+
+                // Add click event to the image for confirmation
+                imgContainer.appendChild(img);
+
+                // Display the similarity percentage
+                const similarityText = document.createElement('p');
+                similarityText.textContent = `Similarity: ${match.similarity}%`;
+                imgContainer.appendChild(similarityText);
+
+                // Append the image and similarity result to the result container
+                imageResults.appendChild(imgContainer);
+                const itemConfirmButton = document.createElement('button');
+                itemConfirmButton.textContent = 'Confirm Item';
+                imgContainer.appendChild(itemConfirmButton);
+
+                itemConfirmButton.addEventListener('click', function() {
+                    const confirmation = confirm(`Are you sure this is your lost item? \nSimilarity: ${match.similarity}%`);
+                    if (confirmation) {
+                        alert('You will be redirected to the profile of the uploader..');
+                        
+                        window.location.href = `/profile/${match.user_id}`;
+                    }
+                });
+            });
+        } else {
+            lostUploadMessage.style.color = 'red';
+            lostUploadMessage.textContent = `No matches found: ${data.message}`;
+        }
+    })
+    .catch(error => {
+        lostUploadMessage.style.color = 'red';
+        lostUploadMessage.textContent = 'Error connecting to the server.';
+        console.error('Error:', error);
+    });
+});
+
+
+
+        // Toggle Dropdown in Sidebar
+        dropdownBtn.addEventListener('click', function() {
+            dropdownContainer.style.display = dropdownContainer.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Logout Button Click Event (just an example)
+        logoutButton.addEventListener('click', function () {
+            const confirmation = confirm(`Are you sure you want to log out?`);
+        if (confirmation) {
+            window.location.href = '/logout'; // Redirect to logout
+            }
+        });
+        // Fetch items when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            let allItems = [];  // Store all items to filter them later
+            const itemList = document.getElementById('item-list');
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+
+            // Fetch the items and store them in the allItems array
+            fetch('/list-items')
+                .then(response => response.json())
+                .then(data => {
+                    allItems = data;  // Store the fetched items
+
+                    // Display the items for the first time
+                    displayItems(allItems);
+                })
+                .catch(error => {
+                    console.error('Error fetching items:', error);
+                });
+
+            // Function to display items
+            function displayItems(items) {
+                itemList.innerHTML = '';  // Clear existing items
+                items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('item');
+
+                    // Create HTML structure for the item
+                    itemDiv.innerHTML = `
+                        <img src="${item.filename}" alt="${item.title}" class="item-image">
+                        <h3>${item.title}</h3>
+                        <p>${item.description}</p>
+                        <p>Uploaded by: <a href="/profile/${item.user_id}">${item.user_name}</a></p>
+                    `;
+
+                    // Append the item div to the list
+                    itemList.appendChild(itemDiv);
+                });
+            }
+
+            // Search button functionality
+            searchButton.addEventListener('click', function() {
+                const searchTerm = searchInput.value.toLowerCase();  // Get search term and convert to lowercase
+
+                // Filter the items based on the search term in the title
+                const filteredItems = allItems.filter(item => 
+                    item.title.toLowerCase().includes(searchTerm)
+                );
+
+                // Display filtered items
+                displayItems(filteredItems);
+            });
+        });
+
+    </script>
+    </body>
+</html>
