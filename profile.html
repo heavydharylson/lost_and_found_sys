@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>User Profile</title>
+        <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: #fff; /* White background */
+            color: #B4DC7F; /* Green text for better contrast */
+            padding: 8px 14px;
+            border-radius: 5px;
+            font-size: 1em;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Space between text and arrow */
+            border: 2px solid #B4DC7F; /* Border color */
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #B4DC7F; /* Change background on hover */
+            color: #fff; /* Change text color on hover */
+        }
+
+        .profile-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #B4DC7F;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin: 10px 0;
+        }
+
+        strong {
+            font-weight: bold;
+            color: #444;
+        }
+
+        .items-section {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .items-section h2 {
+            font-size: 1.5rem;
+            color: #B4DC7F;
+            margin-bottom: 15px;
+        }
+
+        .item-card {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .item-card img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .item-card .item-details {
+            flex: 1;
+        }
+
+        .item-card h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .item-card p {
+            margin: 5px 0;
+            font-size: 1rem;
+            color: #666;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-all; 
+        }
+    </style>
+    </head>
+    <body>
+        <!-- Back to Dashboard Button -->
+        <a href="{{ url_for('dashboard') }}" class="back-button">Go to
+            Dashboard</a>
+
+        <!-- Profile Container -->
+        <div class="profile-container">
+            <h1>User Profile</h1>
+            <h3><strong>Full Name:</strong> {{ user.full_name }}</h3>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Contact Number:</strong> {{ user.contact_no }}</p>
+
+            <!-- User's Uploaded Items Section -->
+            <div class="items-section">
+                <h2>Your Uploaded Items</h2>
+                {% if items %}
+                {% for item in items %}
+                <div class="item-card">
+                    <img
+                        src="{{ url_for('serve_image', category=item.category, filename=item.filename) }}"
+                        alt="{{ item.title }}">
+                    <div class="item-details">
+                        <h3>{{ item.title }}</h3>
+                        <p><strong>Category:</strong> {{ item.category }}</p>
+                        <p><strong>Description:</strong> {{ item.description
+                            }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p>No items uploaded yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </body>
+</html>

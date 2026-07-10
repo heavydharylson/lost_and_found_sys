@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <h1>Dashboard</h1>
+
+        <!-- Display user information -->
+        <div>
+            <p>Welcome, {{ user.username }}!</p>
+        </div>
+
+        <!-- Display all uploaded items -->
+        <div class="item-list">
+            {% for item in items %}
+            <div class="item-card">
+                <img
+                    src="{{ url_for('static', filename='uploads/' + item['category'] + '/' + item['filename']) }}"
+                    alt="{{ item['title'] }}" class="item-image">
+                <h3>{{ item['title'] }}</h3>
+                <p><strong>Description:</strong> {{ item['description'] }}</p>
+                <p><strong>Category:</strong> {{ item['category'] }}</p>
+                <p><strong>Uploaded by:</strong> {{ item['user'] }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </body>
+</html>
